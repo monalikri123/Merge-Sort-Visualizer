@@ -1,5 +1,5 @@
 
-# 🧮 Merge Sort Visualizer using Tkinter and Matplotlib
+# 🧮 Merge Sort Visualizer 
 
 This is a Python-based GUI project to **visualize the Merge Sort algorithm** in action using the **Tkinter** library for GUI components and **Matplotlib** (though unused in this script and can be removed) for potential future animations. It generates a random array and displays the sorting process step-by-step, using colored bars to help understand how Merge Sort works internally.
 
