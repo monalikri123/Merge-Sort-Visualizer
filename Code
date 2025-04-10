@@ -1,0 +1,93 @@
+import tkinter as tk
+from tkinter import ttk
+import random
+import time
+from matplotlib import pyplot as plt
+from matplotlib import animation
+
+# Global data
+data = []
+
+# Merge Sort Algorithm with visualization
+def merge_sort_visual(arr, draw_data, speed):
+    def merge_sort(array, left, right):
+        if left < right:
+            middle = (left + right) // 2
+            merge_sort(array, left, middle)
+            merge_sort(array, middle + 1, right)
+            merge(array, left, middle, right)
+            draw_data(array, get_color_array(len(array), left, middle, right))
+            time.sleep(speed)
+
+    def merge(array, left, middle, right):
+        left_part = array[left:middle + 1]
+        right_part = array[middle + 1:right + 1]    
+        left_idx = right_idx = 0
+
+        for i in range(left, right + 1):
+            if left_idx < len(left_part) and (right_idx >= len(right_part) or left_part[left_idx] <= right_part[right_idx]):
+                array[i] = left_part[left_idx]
+                left_idx += 1
+            else:
+                array[i] = right_part[right_idx]
+                right_idx += 1
+
+    merge_sort(arr, 0, len(arr) - 1)
+
+def get_color_array(length, left, middle, right):
+    color_array = []
+    for i in range(length):
+        if left <= i <= right:
+            if i <= middle:
+                color_array.append('yellow')
+            else:
+                color_array.append('orange')
+        else:
+            color_array.append('blue')
+    return color_array
+
+def draw_data(data, color_array):
+    canvas.delete("all")
+    c_height = 380
+    c_width = 600
+    x_width = c_width / (len(data) + 1)
+    offset = 30
+    spacing = 10
+    normalized_data = [i / max(data) for i in data]
+    for i, height in enumerate(normalized_data):
+        x0 = i * x_width + offset
+        y0 = c_height - height * 340
+        x1 = (i + 1) * x_width + offset - spacing
+        y1 = c_height
+        canvas.create_rectangle(x0, y0, x1, y1, fill=color_array[i])
+        canvas.create_text(x0 + 2, y0, anchor=tk.SW, text=str(data[i]))
+    root.update_idletasks()
+
+def generate():
+    global data
+    data = [random.randint(10, 100) for _ in range(20)]
+    draw_data(data, ['blue' for _ in range(len(data))])
+
+def start_sort():
+    merge_sort_visual(data, draw_data, speed_scale.get())
+
+# GUI Setup
+root = tk.Tk()
+root.title("Merge Sort Visualizer")
+root.maxsize(700, 500)
+root.config(bg='black')
+
+UI_frame = tk.Frame(root, width=600, height=200, bg='grey')
+UI_frame.grid(row=0, column=0, padx=10, pady=5)
+
+canvas = tk.Canvas(root, width=600, height=380, bg='white')
+canvas.grid(row=1, column=0, padx=10, pady=5)
+
+# Buttons and scale
+tk.Button(UI_frame, text="Generate Array", command=generate, bg='red').grid(row=0, column=0, padx=5, pady=5)
+tk.Button(UI_frame, text="Start Merge Sort", command=start_sort, bg='green').grid(row=0, column=1, padx=5, pady=5)
+
+speed_scale = tk.Scale(UI_frame, from_=0.01, to=1.0, length=200, digits=3, resolution=0.01, orient=tk.HORIZONTAL, label="Select Speed [sec]")
+speed_scale.grid(row=0, column=2, padx=5, pady=5)
+
+root.mainloop()
